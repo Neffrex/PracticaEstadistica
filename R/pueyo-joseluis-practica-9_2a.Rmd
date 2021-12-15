@@ -1,0 +1,75 @@
+---
+title: "pueyo-joseluis-practica-n-2"
+author: "Jose Luis Pueyo Viltres"
+date: "20/11/2021"
+output: pdf_document
+---
+
+*Cargo los datos a utilizar desde un archivo .csv*
+
+```{r}
+datos <- read.csv2("datos.csv", header = T)
+datos
+datosConC02 <- c(datos[,1],datos[,2],datos[,3],datos[,4])
+datosSinC02 <- c(datos[,5],datos[,6],datos[,7],datos[,8])
+plot(density(datosConC02))
+plot(density(datosSinC02))
+
+```
+
+**Doneu estimacions de la mitjana de la freqüència respiratòria d’una persona, que està sotmesa a cadascun dels dos tipus d’atmosferes, i de les seves desviacions estàndards.**
+
+*ø*
+
+**Entre quins dos valors podeu assegurar que estarà la diferència de les freqüències respiratòries d’una persona en un 99% dels casos?**
+
+*Para esto calculo el intervalo de confianza de $mu_{1}-mu_{2}$*
+
+```{r}
+diferenciaMu <- abs(mean(x = datosConC02)-mean(x = datosSinC02))
+t.test(x=datosSinC02,y=datosConC02,mu=diferenciaMu,conf.level = 0.99)$conf.int
+```
+*Para calcular el intervalo de confianza he utilizado la función t.test, con el $conf.int solo muestro el intervalo de confianza, que son los dos valores resultantes: [-6.101426,4.49.0315]*
+
+
+**Podeu assegurar (teòricament i empíricament) que cadascun dels dos conjunts de dades segueixen una distribució de probabilitat normal?**
+
+*ø*
+
+```{r}
+chisq.test(datosConC02)$p.value>0.01
+chisq.test(datosSinC02)$p.value>0.01
+
+```
+
+**Genereu una col·lecció de valors de mida 36 que representi una mostra d’una variable aleatòria amb distribució normal de mitjana 2 unitats més que la de la mostra de freqüències respiratòries sense CO i desviació la mateixa.**
+
+*Genero la colección de datos con la función rnorm*
+
+```{r}
+require(stats)
+normAleatoria = rnorm(n = 36, mean = mean(datosSinC02)+2, sd = sd(datosSinC02))
+normAleatoria
+```
+
+**Oblidant-vos ara de com s’ha generat la mostra i dels resultats anteriors, considereu que les tres mostres s´on independents i tenen una distribució normal amb la mateixa desviació. Podeu assegurar que les tres poblacions tenen la mateixa mitjana?**
+
+*Para determinar si las 3 poblaciones tienen la misma media hago un test de anova*
+
+```{r}
+anova_datos = data.frame(datosConC02, datosSinC02, normAleatoria)
+exp.abc <- stack(anova_datos)
+anova(lm(values~ind, data=exp.abc))
+```
+*Como el Pr(>F) es 0.8879 >> 0.01 puedo aceptar con un 99% de confianza la $H_{0}$, es decir, que las medias:*
+
+```{r}
+mean(normAleatoria)
+mean(datosSinC02)
+mean(datosConC02)
+```
+*son iguales.*
+
+**Considerem ara que totes les dades s’han obtingut del Carles i que cada fila correspon a les dades obtingudes en un mes concret que va del gener al setembre. Per exemple, al mes de gener s’ha mesurat 4 vegades la freqüència respiratòria del Carles amb una alta concentració de CO i s’han obtingut els valors 45, 26, 30 i 25. Contrasteu amb un test ANOVA si la freqüència respiratòria depèn de la concentració de CO? I depèn del mes de l’any? Potser depèn de la combinació dels dos factors?**
+
+*ø*

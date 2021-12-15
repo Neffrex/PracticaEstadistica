@@ -1,0 +1,97 @@
+---
+title: "Practica 9"
+author: "Jose Luis Pueyo Viltres"
+date: "29/10/2021"
+output: pdf_document
+---
+*1a part*
+
+*Primer carrego les dades com a 2 vectors, $X_{A}$ i $X_{S}$*
+```{r}
+Xa <- c(45,26,30,25,
+        26,25,45,34,
+        25,34,26,51,
+        34,51,25,46,
+        51,46,34,32,
+        46,32,51,30,
+        32,30,46,46,
+        30,32,32,32,
+        30,30,30,30)
+
+Xs <- c(23,25,30,49,
+        30,23,40,41,
+        49,30,25,35,
+        41,49,23,28,
+        35,41,30,30,
+        28,35,49,49,
+        41,28,41,41,
+        35,35,35,35,
+        28,28,28,28)
+```
+
+**Calculeu les seves mitjanes mostrals, $\hat{x}_{A}$ i $\hat{x}_{S}$, i les seves desviacions mostrals,
+$\hat{s}_{A}$ i $\hat{s}_{A}$.**
+
+*Calculo les mitjanes mostrals:*
+
+```{r}
+# mitjana mostral de XA
+Xa_mitjana <- mean(Xa)
+# mitjana mostral de XS
+Xs_mitjana <- mean(Xs)
+```
+
+*Calculo les desviacions mostrals*
+
+```{r}
+# desviació mostral de XA
+Xa_desviacio <- sd(Xa)
+# desviació mostral de Xs
+Xs_desviacio <- sd(Xs)
+```
+
+*Resultats*
+```{r}
+Xa_mitjana
+Xa_desviacio
+Xs_mitjana
+Xs_desviacio
+```
+
+**Calculeu les desviacions de cada dada respecte la mitjana del seu grup i feu que compti quantes són menors que la desviació del seu grup i quantes majors.**
+
+*El que faig per a fer el càlcul es, primer restar-le al vector $X_{A}$ la mitjana ($\hat{x}_{A}$) amb aquest vector resultant genero un altre vector que conté TRUE si els valors son menors/majors a la desviació y ara només agafo els valors que han donat TRUE del vector X_{A}, com demana quants són menors/majors llavors calculo la longitud del vector amb la funció length()*
+
+```{r}
+# Menors que la desviació 
+length(Xa[Xa-Xa_mitjana<Xa_desviacio])
+# Majors que la desviació 
+length(Xa[Xa-Xa_mitjana>Xa_desviacio])
+```
+
+
+**Suposant que la variable $X_{A}$ segueix una distribució Normal, calculeu:**
+
+**- la probabilitat que el valor de la variable $X_{A}$ sigui menor que $\hat{x}_{A}$, és a dir, $P[X_{A} < \hat{x}_{A}]$. Justifica si aquest resultat és raonable o no.**
+
+*Com que $P[X_{A} < \hat{x}_{A}] = P[X_{A} \le \hat{x}_{A}]$, ja que $P[X_{A} = \hat{x}_{A}] = 0$ perque X es una v.a continua, llavors calculo la probabilitat incloent el valor*
+
+```{r}
+pnorm(Xa_mitjana, Xa_mitjana, Xa_desviacio)
+```
+
+*Aquest resultat té sentit per la forma de la distribució normal, que es en forma de campana, per aixó la mitjana deixará un 50% dels valors abans, per tant la probabilitat que un valor estigui abans de la mitjana es d'un 50%*
+
+**- la probabilitat que el valor de la variable $X_{A}$ se separi del valor $\hat{x}_{A}$ com a màxim $\hat{s}_{A}$, ´es a dir, $P[\hat{x}_{A} -\hat{s}_{A} < X_{A} < \hat{x}_{A} +\hat{s}_{A}]$. Justifica si aquest resultat és raonable o no.**
+
+*$P[\hat{x}_{A}-\hat{s}_{A} < X_{A} < \hat{x}_{A}+\hat{s}_{A}] = P[X_{A} < \hat{x}_{A}+\hat{s}_{A}] - P[X_{A} \le \hat{x}_{A}-\hat{s}_{A}]$*
+
+*Com que $P[X_{A} < \hat{x}_{A}+\hat{s}_{A}] = P[X_{A} \le \hat{x}_{A}+\hat{s}_{A}]$ ja que $P[X_{A} = \hat{x}_{A}-\hat{s}_{A}] = 0$*
+
+*Llavors faig el calcul amb la forma: $P[X_{A} \le \hat{x}_{A}+\hat{s}_{A}] - P[X_{A} \le \hat{x}_{A}-\hat{s}_{A}]$*
+
+```{r}
+pnorm(Xa_mitjana+Xa_desviacio, Xa_mitjana, Xa_desviacio) - 
+  pnorm(Xa_mitjana-Xa_desviacio, Xa_mitjana, Xa_desviacio)
+```
+*La regla 68-95-99.7 justifica que el 68% de les dades (justament el resultat donat), es troben en la primera desviació, que es calcul que hem fet*
